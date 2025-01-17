@@ -8,7 +8,6 @@ on:
 jobs:
   pipeline:
     runs-on: netflix
-
     env:
       SCANNER_HOME: /usr/local/bin/sonar-scanner
       TMDB_V3_API_KEY: ${{ secrets.TMDB }}
