@@ -43,12 +43,13 @@ jobs:
         run: npm install
 
       # Step 8: OWASP Dependency Check
-     - name: OWASP Dependency Check
+      - name: OWASP Dependency Check
         uses: dependency-check/action@v4.2.0
         with:
           scan: './'
           format: 'ALL'
           outputDirectory: './dependency-check-reports'
+
       # Step 9: TRIVY File System Scan
       - name: TRIVY FS Scan
         run: trivy fs . > trivyfs.txt
