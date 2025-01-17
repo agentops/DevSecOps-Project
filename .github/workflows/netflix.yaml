@@ -1,0 +1,87 @@
+name: Netflix DevSecOps Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+
+    env:
+      SCANNER_HOME: /usr/local/bin/sonar-scanner
+      TMDB_V3_API_KEY: ${{ secrets.TMDB }}
+    
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Step 2: Clean Workspace
+      - name: Clean Workspace
+        run: |
+          rm -rf *
+
+      # Step 3: Setup JDK
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+
+      # Step 4: Setup Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '17'
+
+      # Step 5: SonarQube Analysis
+      - name: SonarQube Analysis
+        env:
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          SONAR_AUTH_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          $SCANNER_HOME/bin/sonar-scanner \
+          -Dsonar.projectName=Netflix \
+          -Dsonar.projectKey=Netflix
+
+      # Step 6: Quality Gate
+      - name: Wait for Quality Gate
+        run: |
+          curl -u ${{ secrets.SONAR_TOKEN }} \
+          "$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=Netflix"
+
+      # Step 7: Install Dependencies
+      - name: Install Dependencies
+        run: npm install
+
+      # Step 8: OWASP Dependency Check
+      - name: OWASP FS Scan
+        run: |
+          dependency-check --scan ./ --disableYarnAudit --disableNodeAudit --out dependency-check-report.xml
+        env:
+          DEPENDENCYCHECK_HOME: ${{ secrets.ODC_HOME }}
+
+      # Step 9: TRIVY File System Scan
+      - name: TRIVY FS Scan
+        run: trivy fs . > trivyfs.txt
+
+      # Step 10: Docker Build & Push
+      - name: Docker Build & Push
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: |
+          echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+          docker build --build-arg TMDB_V3_API_KEY=$TMDB_V3_API_KEY -t netflix .
+          docker tag netflix agentops/netflix:latest
+          docker push agentops/netflix:latest
+
+      # Step 11: TRIVY Image Scan
+      - name: TRIVY Image Scan
+        run: trivy image agentops/netflix:latest > trivyimage.txt
+
+      # Step 12: Deploy to Docker Container
+      - name: Deploy to Container
+        run: |
+          docker run -d --name netflix -p 8081:80 agentops/netflix:latest
