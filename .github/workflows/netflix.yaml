@@ -27,7 +27,7 @@ jobs:
         uses: SonarSource/sonarqube-scan-action@v4.2.1
         env:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-          SONAR_AUTH_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           args: > 
             -Dsonar.projectName=Netflix
             -Dsonar.projectKey=Netflix
