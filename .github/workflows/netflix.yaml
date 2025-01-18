@@ -24,13 +24,13 @@ jobs:
 
       # Step 5: SonarQube Analysis
       - name: SonarQube Analysis
+        uses: SonarSource/sonarqube-scan-action@v4.2.1
         env:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
           SONAR_AUTH_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          $SCANNER_HOME/bin/sonar-scanner \
-          -Dsonar.projectName=Netflix \
-          -Dsonar.projectKey=Netflix
+          args: > 
+            -Dsonar.projectName=Netflix
+            -Dsonar.projectKey=Netflix
 
       # Step 6: Quality Gate
       - name: Wait for Quality Gate
