@@ -30,10 +30,6 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         
-          args: >
-            -Dsonar.projectKey=netflix1
-
-
       # Step 6: Quality Gate
       - name: Wait for Quality Gate
         run: |
