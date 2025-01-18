@@ -13,14 +13,15 @@ jobs:
       TMDB_V3_API_KEY: ${{ secrets.TMDB }}
     
     steps:
+      - name: Clean Workspace
+        run: |
+          rm -rf * 
       # Step 1: Checkout the repository
       - name: Checkout Code
         uses: actions/checkout@v3
 
       # Step 2: Clean Workspace
-      - name: Clean Workspace
-        run: |
-          rm -rf *
+     
 
       # Step 5: SonarQube Analysis
       - name: SonarQube Scan
