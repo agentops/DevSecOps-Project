@@ -9,7 +9,7 @@ jobs:
   pipeline:
     runs-on: self-hosted
     env:
-      SCANNER_HOME: /usr/local/bin/sonar-scanner
+      SCANNER_HOME: /usr/local
       TMDB_V3_API_KEY: ${{ secrets.TMDB }}
     
     steps:
