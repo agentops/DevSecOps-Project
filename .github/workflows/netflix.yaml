@@ -34,7 +34,7 @@ jobs:
       - name: Wait for Quality Gate
         run: |
           curl -u ${{ secrets.SONAR_TOKEN }} \
-          "$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=Netflix"
+          $SONAR_HOST_URL/api/qualitygates/project_status?projectKey=Netflix
 
       # Step 7: Install Dependencies
       - name: Install Dependencies
