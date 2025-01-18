@@ -23,15 +23,15 @@ jobs:
           rm -rf *
 
       # Step 5: SonarQube Analysis
-      - name: SonarQube Analysis
-        uses: SonarSource/sonarqube-scan-action@v4.2.1
+      - name: SonarQube Scan
         env:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          args: > 
-            -Dsonar.projectName=Netflix
-            -Dsonar.projectKey=Netflix
-
+        run: |
+          sonar-scanner \
+          -Dsonar.projectKey=netflix1 \
+          -Dsonar.host.url=$SONAR_HOST_URL \
+          -Dsonar.login=$SONAR_TOKEN
       # Step 6: Quality Gate
       - name: Wait for Quality Gate
         run: |
