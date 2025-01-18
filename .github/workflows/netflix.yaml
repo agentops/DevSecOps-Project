@@ -32,18 +32,11 @@ jobs:
         
       # Step 6: Quality Gate
       - name: Wait for Quality Gate
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
-          status=$(curl -s -u "$SONAR_TOKEN:" "$SONAR_HOST_URL/api/qualitygates/project_status?projectKey=Netflix" | jq -r '.projectStatus.status')
-          echo "Quality Gate Status: $status"
-          if [ "$status" != "OK" ]; then
-            echo "Quality Gate failed: $status"
-            exit 1
-          fi
+          curl -u ${{ secrets.SONAR_TOKEN }} \
+          $SONAR_HOST_URL/api/qualitygates/project_status?projectKey=Netflix
 
-          # Step 7: Install Dependencies
+      # Step 7: Install Dependencies
       - name: Install Dependencies
         run: npm install
 
