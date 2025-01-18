@@ -12,6 +12,8 @@ jobs:
       SCANNER_HOME: /usr/local
       TMDB_V3_API_KEY: ${{ secrets.TMDB }}
       SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USENAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
     steps:
       - name: Clean Workspace
         run: |
